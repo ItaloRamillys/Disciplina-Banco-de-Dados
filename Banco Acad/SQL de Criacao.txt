@@ -1,0 +1,161 @@
+--create database Prova
+
+--use Prova
+
+--Autor @ITALO-RAMILLYS
+
+create table unid_acad(
+	cod_unid int not null,
+		constraint pk_cod_ua primary key(cod_unid),
+	nome_unid varchar(30) not null,
+	estado varchar(30) not null,
+	rua varchar(30) not null,
+	cidade varchar(30) not null,
+	cep varchar(30) not null,
+)
+
+create table tel_ua(
+	num_tel_ua int not null,
+		constraint pk_num_ua primary key(num_tel_ua),
+	tipo_fone varchar(10) not null,
+	fk_ua int not null,
+		constraint fk_cod_ua foreign key(fk_ua) references unid_acad(cod_unid)
+		on delete cascade
+		on update cascade
+)
+
+create table departamento(
+	cod_dept int not null,
+		constraint pk_cod_dept primary key(cod_dept),
+	nome varchar(30) not null,
+	estado varchar(30) not null,
+	rua varchar(30) not null,
+	cidade varchar(30) not null,
+	cep varchar(30) not null,
+	fk_ua int not null,
+		constraint fk_cod_ua_dept foreign key(fk_ua) references unid_acad(cod_unid)
+	on delete no action
+	on update cascade
+)
+
+create table tel_dept(
+	num_tel_dept int not null,
+		constraint pk_num_dept primary key(num_tel_dept),
+	tipo_fone char(1) not null,
+	fk_dept int not null,
+		constraint fk_cod_dept foreign key(fk_dept) references departamento(cod_dept)
+		on delete cascade
+		on update cascade	
+)
+
+create table curso(
+	cod_curso int not null,
+		constraint pk_cod_curso primary key(cod_curso),
+	nome_curso varchar(30) not null,
+	fk_dept int not null,
+		constraint fk_cod_dept_curso foreign key(fk_dept) references departamento(cod_dept)
+	on delete no action
+	on update cascade
+)
+
+create table disciplina(
+	cod_disc int not null,
+		constraint pk_cod_disc primary key(cod_disc),
+	nome_disc varchar (20) not null,
+	qtde_cred int not null
+)
+
+create table aluno(
+	matr_aluno int not null,
+		constraint pk_matr_aluno primary key(matr_aluno),
+	nome_aluno varchar(30) not null,
+	estado varchar(30) not null,
+	rua varchar(30) not null,
+	cidade varchar(30) not null,
+	cep varchar(30) not null,
+	cpf int not null unique,
+	rg int not null unique,
+	cod_curso int not null
+		constraint fk_curso foreign key(cod_curso) references curso(cod_curso)
+)
+
+create table professor(
+	matr_prof int not null,
+		constraint pk_matr_prof primary key(matr_prof),		
+	nome_prof varchar(30) not null,
+	cod_dir int,
+	cod_chefia int,
+	cod_coord int,
+
+		constraint fk_chef_dept foreign key(cod_chefia) references departamento(cod_dept),
+		constraint che_u unique(cod_chefia),
+
+		constraint fk_coord_curso foreign key(cod_coord) references curso(cod_curso),
+		constraint dir_u unique(cod_coord),
+						
+		constraint fk_dir_ua foreign key(cod_dir) references unid_acad(cod_unid),
+		constraint coord_u unique(cod_dir),				
+		
+	estado varchar(30) not null,
+	rua varchar(30) not null,
+	cidade varchar(30) not null,
+	cep varchar(30) not null,
+	salario decimal(8,2) not null,
+	rg int not null unique,
+	cpf int not null unique,
+	lotacao int not null,
+		constraint fk_lot_dept foreign key(lotacao) references departamento(cod_dept)
+	on delete no action
+	on update cascade
+)
+
+-- TABELAS AUXILIARES --	
+
+create table aluno_disc(
+	pfk_cod_aluno int not null,
+	pfk_cod_disc int not null,
+	semestre varchar(6) not null,
+		constraint fk_cod_aluno foreign key(pfk_cod_aluno) references aluno(matr_aluno),
+		constraint fk_cod_disc foreign key(pfk_cod_disc) references disciplina(cod_disc),
+		constraint pk_cod_aluno_disc primary key(pfk_cod_aluno, pfk_cod_disc, semestre),
+	
+	notaAP1 decimal(4,2),
+	notaAP2 decimal(4,2),
+	notaAF decimal(4,2),
+)
+
+create table pre_req(
+	pfk_cod_disc int not null,
+	pfk_cod_disc_pre int not null,
+		constraint fk_cod_discREQ foreign key (pfk_cod_disc) references disciplina(cod_disc),
+		constraint fk_cod_disc_preREQ foreign key (pfk_cod_disc_pre) 	references disciplina(cod_disc),
+		constraint pk_cod_disc_preREQ primary key (pfk_cod_disc_pre,pfk_cod_disc_pre) 
+)
+
+create table dept_curso(
+	pfk_cod_dept int not null,
+	pfk_cod_curso int not null,
+		constraint fk_cod_dept_aux foreign key(pfk_cod_dept) references departamento(cod_dept),
+		constraint fk_cod_curso_aux foreign key(pfk_cod_curso) references curso(cod_curso),
+		constraint pk_cod_curso_dept_aux primary key(pfk_cod_curso, pfk_cod_dept)
+)
+
+create table curso_disc(
+	pfk_cod_disc int not null,
+	pfk_cod_curso int not null,
+	
+		constraint fk_cod_disc_aux foreign key(pfk_cod_disc) references disciplina(cod_disc),
+		constraint fk_cod_curso_aux2 foreign key(pfk_cod_curso) references curso(cod_curso),
+		constraint pk_cod_curso_disc primary key(pfk_cod_curso, pfk_cod_disc)
+)
+
+create table prof_disc(
+	pfk_cod_disc int not null,
+	pfk_matr_prof int not null,
+	semestre varchar(6) not null,
+		constraint fk_cod_disc_aux_prof foreign key(pfk_cod_disc) references disciplina(cod_disc),
+		constraint fk_matr_prof foreign key(pfk_matr_prof) references professor(matr_prof),
+		constraint pk_cod_prof_disc primary key(pfk_matr_prof, pfk_cod_disc, semestre)	
+)
+
+

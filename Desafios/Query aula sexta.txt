@@ -1,0 +1,42 @@
+/* select v.nome as 'NOME VENDEDOR', sum(h.qtde) as 'QUANTIDADE VENDIDA DE ITENS', sum(h.qtde*h.prven) as 'SOMA VALORES', count(*) as 'QUANTIDADE DE VENDAS' 
+from vendedores v, historico h
+where v.matr = h.matrvend
+group by v.nome, v.matr
+having (sum(h.qtde*h.prven))>1000
+order by 4 desc */
+
+/*
+select e.ref, sum(h.qtde) as 'Total vendido', sum(h.qtde*h.prven) as 'Valor total de venda', count(*) as 'Quantidade de vendas', f.nome as 'Nome fornecedor' 
+from historico h, estoque e, fornecedores f
+where e.cod = h.coditem and f.cod = e.codfor
+group by e.ref, f.nome, e.cod
+having count(h.matrvend)>1
+order by 3 desc, 1
+*/
+
+select f.nome as 'Nome dos fornecedores'
+from fornecedores f, estoque e, historico h, vendedores v, filiais fi
+where f.cod = e.codfor and
+	  e.cod = h.coditem and
+	  h.matrvend = v.matr and
+	  v.codfil = fi.cod
+group by f.nome, f.cod
+having count(distinct codfil)>2
+
+
+select * from vendedores order by matr
+
+select * from historico order by coditem
+
+select * from estoque order by cod
+
+select * from filiais order by cod
+
+select * from fornecedores order by cod
+
+--Eletrolux,LG,Sony
+-- 1
+-- 53
+-- 59
+--133
+-- 777

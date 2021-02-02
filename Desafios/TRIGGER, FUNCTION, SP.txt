@@ -1,0 +1,47 @@
+
+--Salário de um vendedor não pode ser maior que duas
+--vezes a média salarial da filial em que trabalha 
+
+CREATE TRIGGER salario_lim
+ON vendedores
+FOR  INSERT,UPDATE
+AS
+IF (select salario from inserted) >  2*(( dbo.salariosoma((select matr from inserted)))/(dbo.salarioqtde((select matr from inserted))))
+BEGIN
+RAISERROR ('Atenção! salario maior que o limite.',16,1)
+ROLLBACK TRANSACTION
+END
+
+
+CREATE FUNCTION salariosoma (@matr smallint)
+returns dec (30,2)
+as
+begin 
+declare @soma dec (30,2)
+select @soma=(select sum(salario) from vendedores v where v.codfil = (select x.codfil from vendedores x where matr = @matr) and matr != @matr)
+return @soma 
+end
+
+CREATE FUNCTION salarioqtde (@matr smallint)
+returns int
+as
+begin 
+declare @qtde dec (6,2)
+select @qtde=(select count(salario) from vendedores v where v.codfil = (select x.codfil from vendedores x where matr = @matr) and matr != @matr)
+return @qtde 
+end
+
+--TESTES
+
+delete from vendedores where salario > 5000
+
+insert into vendedores values(188, 'Ana',6601, 2, 343)
+
+select * from vendedores
+
+select 2*avg(salario), codfil from vendedores group by codfil
+
+select sum (salario), codfil from vendedores v, filiais f where v.codfil = f.cod  group by v.codfil
+
+select count (salario), codfil from vendedores v inner join filiais f on v.codfil = f.cod group by v.codfil
+
