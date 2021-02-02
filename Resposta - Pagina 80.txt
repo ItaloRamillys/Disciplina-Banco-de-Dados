@@ -1,0 +1,39 @@
+1- 
+π NomeDisc (
+			ρ NomeDisc ← d.Nome
+			(σ d.Professor=2125
+				(ρ d ( Disciplinas )))
+) 
+	
+
+2-
+π NomeProf, Sala (
+			ρ NomeProf ← d.Nome, Sala ← d.Sala
+			(ρ d ( Professor ))
+) 
+
+	
+3-
+π MatrNr (
+			ρ MatrNr ← c.MatrNr
+			(σ c.Nota<2
+			(ρ c ( Cursa_Disciplina )))
+)
+
+4-
+π Nome (
+			ρ Nome ← d.Nome
+			(σ d.Creditos<4
+			(ρ d ( Disciplinas )))
+)
+
+5-
+π Id (
+		(ρ Id←a.MatrNr
+			(
+				(ρ c ( Cursa_Disciplina ))
+		 			⨝ a.MatrNr ≠ c.MatrNr 
+		    	(ρ a ( Aluno ))
+			) 
+		) 
+	)

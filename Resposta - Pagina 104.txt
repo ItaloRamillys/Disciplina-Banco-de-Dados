@@ -1,0 +1,33 @@
+1 - π Nome, DiscNome (ρ Nome←a.Nome, DiscNome←dis.Nome
+	(
+		(ρ CodDisc←c_d.Cod_disc,MatrNr←c_d.MatrNr (( ρ dis ( Disciplinas )) ⨝ dis.Cod_disc = c_d.Cod_disc 
+		( ρ c_d (Cursa_Disciplina ))) ⨝ MatrNr = a.MatrNr
+		( ρ a  (Aluno) ))
+	) 
+)
+
+2 - π Nome, DiscNome (
+			(ρ Nome←p.Nome,DiscNome←dis.Nome (( ρ dis ( Disciplinas )) ⟕ dis.Professor = p.Matr_Prof 
+			(ρ p (Professor)))
+	) 
+)
+
+3 - π CodDisc, PreReq (
+			(ρ CodDisc←p.Cod_disc,PreReq←p.Pre_req 
+			(ρ p (pre_req)))
+	)
+
+Desafio - π NomeDisc, NomePreReq (
+		(ρ NomePreReq←dis2.Nome 
+			(
+				(ρ NomeDisc←dis.Nome,PreReq←p.Pre_req 
+					(
+						(ρ dis ( Disciplinas )) ⟖ dis.Cod_disc = p.Cod_disc 
+						(ρ p ( pre_req ))
+					)
+				) ⨝ dis2.Cod_disc = PreReq (ρ dis2 ( Disciplinas ))
+			) 
+		) 
+	)
+
+	
